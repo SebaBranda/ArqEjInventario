@@ -1,0 +1,2 @@
+# inventario
+Ejercicio de inventario

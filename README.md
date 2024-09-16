@@ -12,7 +12,7 @@ En la actualidad hay 4 flujos de trabajo, de los cuales IoT no se encuentra impl
 
 **MANTENIMIENTO EDILICIO**: lleva un control de la ubicación física de los bienes, fecha de adquisición, marca, modelo, documentación (factura, manuales, etc.), proveedor, soporte, historial de mantenimiento, notas .
 
-**IOT**: Hay dispositivos inteligentes conectados a la red de la universidad (Aires acondicionados inteligentes, sensores de temperatura, sensores de CO2, switchs de luz inteligentes, UPS inteligentes). Dichos dispositivos estan integrados por un BROKER de mensajes MQTT capaz de enviar y recibir información.
+**IOT**: Hay dispositivos inteligentes conectados a la red de la universidad (Aires acondicionados inteligentes, sensores de temperatura, sensores de CO2, switchs de luz inteligentes, UPS inteligentes). Dichos dispositivos están integrados por un BROKER de mensajes MQTT capaz de enviar y recibir información.
 Los datos enviados por estos dispositivos deben ser almacenados en una base de datos de serie de tiempo que contiene los siguientes datos: ID DE DISPOSITIVO, SENSORES, TIMESTAMP, VALOR.
 
 Es importante poder restringir la visualización de los datos de los sensores/DISPOSITIVOS por su ubicación física.
@@ -21,7 +21,7 @@ Es importante poder restringir la visualización de los datos de los sensores/DI
 
 La registración de bienes esta descentralizada y no es posible llevar un rastreo de los bienes.
 
-La amortización de bienes de uso se lleva a mano por Excel y se carga manualmente la contabilidad mediante una interface por archivos. Hay inconsistencias entre la contabilidad y los bienes de uso, no se sabe dónde estan ubicados o si estan en uso (por que se rompieron).
+La amortización de bienes de uso se lleva a mano por Excel y se carga manualmente la contabilidad mediante una interface por archivos. Hay inconsistencias entre la contabilidad y los bienes de uso, no se sabe dónde están ubicados o si están en uso (por que se rompieron).
 
 El mantenimiento se lleva con planillas físicas, los manuales no se resguardan. No se realiza el mantenimiento en tiempo y forma de distintos equipos. Por ejemplo, las UPS de la biofábrica no tienen un cambio de batería hace 4 años.
 
@@ -33,23 +33,24 @@ Los sistemas tiene pocos usuarios, entre 10 y 15 usuarios por secotor. No hay us
 
 ## REQUERIMIENTOS
 
-**Caracteristicas** 
+**Características** 
 
-- Separacion de los sub-dominios `CORE` (que es propio de cada característica), `GENERIC`(es independiente de la característica y puedo usar un producto existente) Y `SUPPORTING` (no es un elemento core pero es necesario).
+- Separación de los sub-dominios `CORE` (que es propio de cada característica), `GENERIC`(es independiente de la característica y puedo usar un producto existente) Y `SUPPORTING` (no es un elemento core pero es necesario).
 - Minimizar el acoplamiento entre los distintos elementos sin perder sinergia/cohesión. 
 - Cuando el usuario de compras cree un nuevo bien, el mismo debe estar disponible para el resto de los sistemas.
-- Cuando el usuario de mantenimiento indique que un bien ha sido descartado, el sistema de amortizacion debe reflejar la perdida contable e informar al al sistema de IoT, si aplica, para que no muetre un alerta de desconexion.
-- de mantenimiento indique que un bien ha sido realocado, el sistema de  IoT debe representar su nueva ubicacion.
+- Cuando el usuario de mantenimiento indique que un bien ha sido descartado, el sistema de amortización debe reflejar la perdida contable e informar al al sistema de IoT, si aplica, para que no muestre un alerta de desconexión.
+- de mantenimiento indique que un bien ha sido reubicado, el sistema de  IoT debe representar su nueva ubicación.
 
 **TAREAS**
-Teniendo en cuenta las caracteristicas requeridas
+Teniendo en cuenta las características requeridas
 
 - Defina la estructura de la arquitectura. 
-- Defina las desiciones de arquitectura. 
-- Realice un diagrama de contenedores, segun el modelo C4,  
+- Defina las decisiones de arquitectura. 
+- Realice un diagrama de contenedores, según el modelo C4,  
 - Defina casos de uso y su secuencia
 - Defina los contratos relevantes
 - Si emplea algún supuesto debe aclararlo.
+
 
 # RESOLUCIÓN
 

@@ -1,6 +1,10 @@
 # INVENTARIO, MANTENIMIENTO Y CONTROL DE BIENES
 
-## SITUACION ACTUAL
+## DESCRIPCION
+
+### SITUACION ACTUAL
+
+En la actualidad hay 4 flijos de trabajo, de los cuales IoT no se encuentra implementado. Se debe integrar las informaicon compartida de estos 4 sistemas.
 
 **COMPRAS**: La adquisición de bienes se puede dar mediante del sector de compras o por compra directa utilizando *“caja chica”* o distintos centros de costos de los institutos de la universidad. EL objetivo del sistema de compras es registrar el proceso de adquisición. Fecha de adquisición, valor de adquisición, sector de adquisición (el sector es organizacional no de ubicación física) esto es afines de saber quién es el *“dueño”* del bien.
 
@@ -13,21 +17,39 @@ Los datos enviados por estos dispositivos deben ser almacenados en una base de d
 
 Es importante poder restringir la visualización de los datos de los sensores/DISPOSITIVOS por su ubicación física.
 
-## PROBLEMATICA
+### PROBLEMATICA
 
 La registración de bienes esta descentralizada y no es posible llevar un rastreo de los bienes.
-La amortización de bienes de uso se lleva a mano por Excel y se concilia manualmente contra la contabilidad. Hay inconsistencias entre la contabilidad y los bienes de uso, no se sabe dónde estan ubicados o si estan en uso (por que se rompieron).
+
+La amortización de bienes de uso se lleva a mano por Excel y se carga manualmente la contabilidad mediante una interface por archivos. Hay inconsistencias entre la contabilidad y los bienes de uso, no se sabe dónde estan ubicados o si estan en uso (por que se rompieron).
 
 El mantenimiento se lleva con planillas físicas, los manuales no se resguardan. No se realiza el mantenimiento en tiempo y forma de distintos equipos. Por ejemplo, las UPS de la biofábrica no tienen un cambio de batería hace 4 años.
-El sistema de IOT no existe, pero debe integrarse con el sistema de mantenimiento edilicio con el fin de utilizar los datos adquiridos para mantenimiento preventivo / predictivo (por ejemplo si un aire acondicionado consume más energía que el resto puede ser que le falte gas o tenga sucio los filtros).
 
-## TAREAS A REALIZAR
+El sistema de IoT no existe, pero debe integrarse con el sistema de mantenimiento edilicio con el fin de utilizar los datos adquiridos para mantenimiento preventivo / predictivo (por ejemplo si un aire acondicionado consume más energía que el resto puede ser que le falte gas o tenga sucio los filtros).
 
-Realice un diagrama de arquitectura del sistema con características indicadas. Las características pueden ser sistemas o servicios en sí mismos con componentes compartidos. Puede diseñarlo con la estructura que desee, pero debe minimizar el acoplamiento entre los distintos elementos sin perder sinergia/cohesión.
+## USUARIOS
 
-CLAVE: Separar los subdominios,  `CORE` (que es propio de cada característica), `GENERIC`(es independiente de la característica y puedo usar un producto existente) Y `SUPPORTING` (no es un elemento core pero es necesario).
+Los sistemas tiene pocos usuarios, entre 10 y 15 usuarios por secotor. No hay usuarios comunes entre los sistemas, es decir que el usuario de compras no accede al de mantenimiento. 
 
-Si emplea algún supuesto debe aclararlo.
+## REQUERIMIENTOS
+
+**Caracteristicas** 
+
+- Separacion de los sub-dominios `CORE` (que es propio de cada característica), `GENERIC`(es independiente de la característica y puedo usar un producto existente) Y `SUPPORTING` (no es un elemento core pero es necesario).
+- Minimizar el acoplamiento entre los distintos elementos sin perder sinergia/cohesión. 
+- Cuando el usuario de compras cree un nuevo bien, el mismo debe estar disponible para el resto de los sistemas.
+- Cuando el usuario de mantenimiento indique que un bien ha sido descartado, el sistema de amortizacion debe reflejar la perdida contable e informar al al sistema de IoT, si aplica, para que no muetre un alerta de desconexion.
+- de mantenimiento indique que un bien ha sido realocado, el sistema de  IoT debe representar su nueva ubicacion.
+
+**TAREAS**
+Teniendo en cuenta las caracteristicas requeridas
+
+- Defina la estructura de la arquitectura. 
+- Defina las desiciones de arquitectura. 
+- Realice un diagrama de contenedores, segun el modelo C4,  
+- Defina casos de uso y su secuencia
+- Defina los contratos relevantes
+- Si emplea algún supuesto debe aclararlo.
 
 # RESOLUCIÓN
 
@@ -42,12 +64,12 @@ Si emplea algún supuesto debe aclararlo.
 - MANTENIMIENTO
 
 - CATALOGO-IOT
-  
-  ## SUBDOMINIOS SUPPORTING
+
+## SUBDOMINIOS SUPPORTING
 
 - INVENTARIO DE BIENES
-  
-  ## SUBDOMINIOS GENERIC
+
+## SUBDOMINIOS GENERIC
 
 - BASE DE DATOS SQL
 
@@ -63,24 +85,53 @@ Si emplea algún supuesto debe aclararlo.
 
 - TODO: KEYCLOAK / OIDC IDENTITY PROVIDER
 
-## PATRONES
+## DECISIONES DE ARQUITECTURA
 
-**SPA**: Se utiliza SPA para debido a que los UI no necesita SEO.
+ARQUTIECTURA DE CADA SISTEMA: LAYERED, Como cada sistema tiene pocos usuarios es mejor mantener una estructura simple a fin de no aumentar tiempo de desarrollo e implementacion.
 
-**MEDIATOR PATTERN**: Se utiliza el `MEDIATOR PATTERN` para la integración del inventario. Con los siguientes mensajes
+INTEGRACION DE SISTEMAS: Se utiliza el `MEDIATOR PATTERN` para la integración del inventario. Con los siguientes mensajes. Es clave mantener el "contrato" o la "interface" del servicio de inventario inmutable o poco volátil. Si bien este elemento suma complejidad al sistema es necesario para poder desacoplar los otros sistemas y que evolucionen en forma independiente.
 
-1. COMANDO DE ALTA DE BIEN
+1. COMANDO DE ALTA/ACTIVACION DE BIEN
 2. COMANDO DE BAJA (LOGICA) DE BIEN
 3. COMANDO DE CONSULTA DE BIENES / BIEN
 4. COMANDO DE MODIFICACION UBICACION DEL BIEN
 5. COMANDO DE MODIFICACION NOMBRE Y DESCRIPCION DEL BIEN
-6. COMANDO DE ALTA DE UBICACION
-7. COMANDO DE BAJA (LOGICA) DE UBICACION
-8. COMANDO DE CONSULTA DE UBICACION/UBICACIONES
-9. NOTIFICACION DE NUEVO BIEN
-10. NOTIFICACION DE BAJA DE BIEN
+6. NOTIFICACION DE NUEVO BIEN
+7. NOTIFICACION DE BIEN MODIFICADO
+8. NOTIFICACION DE BAJA DE BIEN
 
-Es clave mantener el "contrato" o la "interface" del servicio de inventario inmutable o poco volátil. Si bien este elemento suma complejidad al sistema es necesario para poder desacoplar los otros sistemas y que evolucionen en forma independiente.
+### ACTIVACION DE BIEN
+
+Los biene dados de alta en el sistema de compras deben ser activados. Esto cambia el estado del bien e informa al resto de los sistemas qeu hay un nuevo bien disponible
+
+```mermaid
+sequenceDiagram
+    autoNumber
+    actor U AS Usuario Compras
+    participant C AS Compras
+    participant B AS Broker
+    participant I AS Inventario
+    participant M AS Mantenimiento
+    participant BU AS AM-BU
+    participant IOT AS IoT
+    U->>C: Alta de bien
+    activate C
+    C->>B: Comando ACTIVACION DE BIEN
+    B->>I: Comando ACTIVACION DE BIEN
+    alt ERROR
+    I-->>B: ACTIVACION DE BIEN ERROR
+    B-->>C: ACTIVACION DE BIEN ERROR
+    end
+    alt OK
+    I-->>B: Alta bien OK
+    B-->>C: Alta bien OK
+    deactivate C
+    I-->>B: Notificacion alta bien
+    B-->>M: Notificacion alta bien
+    B-->>BU: Notificacion alta bien
+    B-->>IOT: Notificacion alta bien
+    end
+```
 
 ### INTERFACE SISTEMA DE INVENTARIO
 

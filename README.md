@@ -4,7 +4,7 @@
 
 ### SITUACION ACTUAL
 
-En la actualidad hay 4 flijos de trabajo, de los cuales IoT no se encuentra implementado. Se debe integrar las informaicon compartida de estos 4 sistemas.
+En la actualidad hay 4 flujos de trabajo, de los cuales IoT no se encuentra implementado. Se debe integrar las información compartida de estos 4 sistemas.
 
 **COMPRAS**: La adquisición de bienes se puede dar mediante del sector de compras o por compra directa utilizando *“caja chica”* o distintos centros de costos de los institutos de la universidad. EL objetivo del sistema de compras es registrar el proceso de adquisición. Fecha de adquisición, valor de adquisición, sector de adquisición (el sector es organizacional no de ubicación física) esto es afines de saber quién es el *“dueño”* del bien.
 

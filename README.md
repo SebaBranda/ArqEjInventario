@@ -54,8 +54,6 @@ Teniendo en cuenta las características requeridas
 
 # RESOLUCIÓN
 
-![Diagrama estructural](./diagrama.drawio.svg)
-
 ## SUBDOMINIOS CORE
 
 - COMPRAS
@@ -76,19 +74,21 @@ Teniendo en cuenta las características requeridas
 
 - BASE DE DATOS NOSQL
 
+- BROKER DE MENSAJES RABBITMQ
+
 - MQTT BROKER
 
 - GRAFANA
 
 - TSDB FORWARDER
 
-- RABBITMQ
 
-- TODO: KEYCLOAK / OIDC IDENTITY PROVIDER
-
-## DECISIONES DE ARQUITECTURA
+## ESTRUCTURA
 
 ARQUTIECTURA DE CADA SISTEMA: LAYERED, Como cada sistema tiene pocos usuarios es mejor mantener una estructura simple a fin de no aumentar tiempo de desarrollo e implementacion.
+
+
+## DECISIONES DE ARQUITECTURA
 
 INTEGRACION DE SISTEMAS: Se utiliza el `MEDIATOR PATTERN` para la integración del inventario. Con los siguientes mensajes. Es clave mantener el "contrato" o la "interface" del servicio de inventario inmutable o poco volátil. Si bien este elemento suma complejidad al sistema es necesario para poder desacoplar los otros sistemas y que evolucionen en forma independiente.
 
@@ -101,7 +101,14 @@ INTEGRACION DE SISTEMAS: Se utiliza el `MEDIATOR PATTERN` para la integración d
 7. NOTIFICACION DE BIEN MODIFICADO
 8. NOTIFICACION DE BAJA DE BIEN
 
-### ACTIVACION DE BIEN
+
+## DIAGRAMA DE CONTENEDORES
+
+![Diagrama estructural](./diagrama.drawio.svg)
+
+
+
+### COMANDO ACTIVACION DE BIEN
 
 Los biene dados de alta en el sistema de compras deben ser activados. Esto cambia el estado del bien e informa al resto de los sistemas qeu hay un nuevo bien disponible
 
@@ -134,62 +141,44 @@ sequenceDiagram
     end
 ```
 
+**TODO:** SECUENCIAS DE COMANDO DE BAJA (LOGICA) DE BIEN, COMANDO DE CONSULTA DE BIENES / BIEN, COMANDO DE MODIFICACION UBICACION DEL BIEN, COMANDO DE MODIFICACION NOMBRE Y DESCRIPCION DEL BIEN
+
+
 ### INTERFACE SISTEMA DE INVENTARIO
 
 Si bien no es una base de datos relacional, creo que un DER es útil para la representación de datos
 
 ```mermaid
 erDiagram
-    LOCATIONS ||--o{ ITEMS: "CONTIENE"
     ITEMS{
         BIGINT ItemId PK "Identificador unico de registro"
         VARCHAR_128 Name "Nombre corto"
         VARCHAR_255 Descripcion "Nombre Largo"
         INT Status "Estado del bien"
         DATETIME Aquired "Fecha de adquisision"
-        INT LocationId "Estado del bien"
+        VARCHAR_255 Location "Ubicacion del bien"
+        VARCHAR_128 CreatedBy "Usuario de alta"
         DATETIME Modified "Fecha de ultima modificacion"
         VARCHAR_128 ModificedBy "Usuario de ultima modificacion"
         DATETIME Deleted "Fecha de baja logica"
-        VARCHAR_128 CreatedBy "Usuario de baja"
-    }
-    LOCATIONS{
-        BIGINT LocationId PK "Identificador unico de registro"
-        VARCHAR_128 Name "Nombre corto"
-        VARCHAR_255 Descripcion "Nombre Largo"
-        INT Status "Estado de la ubicacion"
-        DATETIME Created "Fecha de creacion"
-        VARCHAR_128 CreatedBy "Usuario de creacion"
-        DATETIME Deleted "Fecha de baja logica"
-        VARCHAR_128 CreatedBy "Usuario de baja"
+        VARCHAR_128 DeleteddBy "Usuario de baja"
     }
 ```
 
-- A fin de reducir el acoplamiento del sistema de IOT con el sistema de mantenimiento se agrega las ubicaciones al catalogo
 
 - Propiedades modificables de un bien
   
   - Items.Name
   
   - Items.Description
+
+  - Items.Location
   
   - Items.Status
 
 #### ITEMS.Status
 
-```mermaid
-stateDiagram-v2
-    state "(0)INICIAL" as s0
-    state "(1)ACTIVO" as s1
-    state "(-1) BAJA" as s2
-
-    s0 --> s1
-    s0 --> s2
-    s1 --> s2
-    s2--> [*]    
-```
-
-#### LOCATIONS.Status
+Diagrama de estados de un bien
 
 ```mermaid
 stateDiagram-v2
@@ -202,6 +191,10 @@ stateDiagram-v2
     s1 --> s2
     s2--> [*]    
 ```
+
+- (0) INICIAL: Es cuando el bien esta en proceso de carga pero no listo para ser comunicado a los demas sistemas
+- (1) ACTIVO: Es cuando el bien esta cargado y listo par aser comunicado al resot de los sistemas
+- (-1) BAJA: Estado de baja logica lde bien
 
 ## SUPUESTOS
 

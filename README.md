@@ -209,3 +209,115 @@ stateDiagram-v2
 - MAPA DE LOS MENSAJES
 - DIAGRAMA DE SECUENCIA DEL COMANDO DE ALTA O BAJA DE BIEN
 - LOCATIONS DEBERIA SER UNA ESTRUCTURA DE ARBOL, VER EL PATRON MATERIALIZED_TREE EN MONGODB
+
+
+# Entrega ejercicios inventario
+
+- COMANDO DE BAJA (LOGICA) DE BIEN
+
+```mermaid
+sequenceDiagram
+    autoNumber
+    actor U AS Usuario Mantenimiento
+    participant M AS Mantenimiento
+    participant B AS Broker
+    participant I AS Inventario
+    participant BU AS AM-BU
+    participant IOT AS IoT
+    U->>M: Baja de bien
+    activate M
+    M->>B: Comando BAJA DE BIEN
+    B->>I: Comando BAJA DE BIEN
+    alt ERROR
+    B-->>M: BAJA DE BIEN ERROR
+    I-->>B: BAJA DE BIEN ERROR
+    end
+    alt OK
+    I-->>B: Baja bien OK
+    B-->>M: Baja bien OK
+    deactivate M
+    I-->>B: Notificacion baja bien
+    B-->>BU: Notificacion baja bien
+    B-->>IOT: Notificacion baja bien
+    end
+```
+
+COMANDO DE CONSULTA DE BIENES / BIEN
+
+```mermaid
+sequenceDiagram
+    autoNumber
+    actor UM AS Usuario
+    participant M AS Mantenimiento/Compras/AM-BU?
+    participant B AS Broker
+    participant I AS Inventario
+    UM->>M: Consulta de bien
+    activate M
+    M->>B: Comando CONSULTA DE BIEN
+    B->>I: Comando CONSULTA DE BIEN
+    alt ERROR
+    B-->>M: CONSULTA DE BIEN ERROR
+    I-->>B: CONSULTA DE BIEN ERROR
+    end
+    alt OK
+    I-->>B: Consulta bien OK
+    B-->>M: Consulta bien OK
+    deactivate M
+    end
+```
+
+COMANDO DE MODIFICACION UBICACION DEL BIEN
+
+```mermaid
+sequenceDiagram
+    autoNumber
+    actor U AS Usuario Mantenimiento
+    participant M AS Mantenimiento
+    participant B AS Broker
+    participant I AS Inventario
+    participant IOT AS IoT
+    U->>M: Modificacion de ubicacion de bien
+    activate M
+    M->>B: Comando MODIFICACION DE UBICACION DE BIEN
+    B->>I: Comando MODIFICACION DE UBICACION DE BIEN
+    I->>IOT: Comando MODIFICACION DE UBICACION DE BIEN
+    alt ERROR
+    B-->>M: MODIFICACION DE UBICACION DE BIEN ERROR
+    I-->>B: MODIFICACION DE UBICACION DE BIEN ERROR
+		IOT-->>I: MODIFICACION DE UBICACION DE BIEN ERROR
+    end
+    alt OK
+    B-->>M: MODIFICACION DE UBICACION DE BIEN OK
+    I-->>B: MODIFICACION DE UBICACION DE BIEN OK
+		IOT-->>I: MODIFICACION DE UBICACION DE BIEN OK
+    deactivate M
+    I-->>B: Notificacion modificación de ubicación bien
+
+    end
+```
+
+COMANDO DE MODIFICACION NOMBRE Y DESCRIPCION DEL BIEN? 
+
+```mermaid
+sequenceDiagram
+    autoNumber
+    actor U AS Usuario Mantenimiento
+    participant M AS Mantenimiento
+    participant B AS Broker
+    participant I AS Inventario
+    U->>M: Modificacion de nombre y descripción de bien
+    activate M
+    M->>B: Comando MODIFICACION DE NOMBRE Y DESCRIPCIÓN DE BIEN
+    B->>I: Comando MODIFICACION DE NOMBRE Y DESCRIPCIÓN DE BIEN
+    alt ERROR
+    B-->>M: MODIFICACION DE NOMBRE Y DESCRIPCIÓN DE BIEN ERROR
+    I-->>B: MODIFICACION DE NOMBRE Y DESCRIPCIÓN DE BIEN ERROR
+    end
+    alt OK
+    B-->>M: MODIFICACION DE NOMBRE Y DESCRIPCIÓN DE BIEN OK
+    I-->>B: MODIFICACION DE NOMBRE Y DESCRIPCIÓN DE BIEN OK
+    deactivate M
+    I-->>B: Notificacion modificación de nombre y descripción de bien
+
+    end
+```
